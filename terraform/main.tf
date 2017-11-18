@@ -15,19 +15,19 @@ resource "aws_key_pair" "dokku" {
 # 80 - Allows HTTP access to applications
 resource "aws_security_group" "elb_sg" {
   description = "ELB ports for Dokku access"
-  vpc_id = "${var.vpc_id}"
+  vpc_id      = "${var.vpc_id}"
 
   ingress {
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
     cidr_blocks = "${var.allowed_cidr_blocks}"
   }
 
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -37,27 +37,27 @@ resource "aws_security_group" "elb_sg" {
 # 80 - Allows HTTP access to application
 resource "aws_security_group" "dokku_sg" {
   description = "Dokku server ports"
-  vpc_id = "${var.vpc_id}"
+  vpc_id      = "${var.vpc_id}"
 
   ingress {
     security_groups = ["${aws_security_group.elb_sg.id}"]
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = "${var.allowed_cidr_blocks}"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    cidr_blocks     = "${var.allowed_cidr_blocks}"
   }
 
   ingress {
     security_groups = ["${aws_security_group.elb_sg.id}"]
-    from_port = 3000
-    to_port = 3000
-    protocol = "tcp"
+    from_port       = 3000
+    to_port         = 3000
+    protocol        = "tcp"
   }
 
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -70,17 +70,17 @@ resource "aws_security_group" "dokku_sg" {
 # This provisions the Ubuntu 16.04 instance via cloud-config in
 # the template file below.
 resource "aws_instance" "dokku" {
-  ami = "${var.ami}"
-  instance_type = "${var.instance_type}"
+  ami                         = "${var.ami}"
+  instance_type               = "${var.instance_type}"
   associate_public_ip_address = true
-  key_name = "${var.key_name}"
-  subnet_id = "${var.subnet_id}"
-  vpc_security_group_ids = [
+  key_name                    = "${var.key_name}"
+  subnet_id                   = "${var.subnet_id}"
+  vpc_security_group_ids      = [
     "${aws_security_group.dokku_sg.id}"
   ]
 
   root_block_device {
-    volume_size = "${var.root_volume_size}"
+    volume_size           = "${var.root_volume_size}"
     delete_on_termination = true
   }
 
@@ -89,13 +89,13 @@ resource "aws_instance" "dokku" {
   }
 
   connection {
-    type = "ssh"
-    user = "ubuntu"
+    type        = "ssh"
+    user        = "ubuntu"
     private_key = "${file("${var.key_path}")}"
   }
 
   provisioner "file" {
-    source = "${path.module}/scripts/init-dokku.sh"
+    source      = "${path.module}/scripts/init-dokku.sh"
     destination = "/home/ubuntu/init-dokku.sh"
   }
 
@@ -109,8 +109,8 @@ resource "aws_instance" "dokku" {
 
 # ELB created to access dokku
 resource "aws_elb" "elb_dokku" {
-  name = "elb-dokku"
-  subnets = ["${var.subnet_id}"]
+  name            = "elb-dokku"
+  subnets         = ["${var.subnet_id}"]
   security_groups = ["${aws_security_group.elb_sg.id}"]
 
   tags {
@@ -118,18 +118,18 @@ resource "aws_elb" "elb_dokku" {
   }
 
   listener {
-    instance_port = 3000
+    instance_port     = 3000
     instance_protocol = "http"
-    lb_port = 80
-    lb_protocol = "http"
+    lb_port           = 80
+    lb_protocol       = "http"
   }
 
   health_check {
-    healthy_threshold = 2
+    healthy_threshold   = 2
     unhealthy_threshold = 2
-    timeout = 3
-    target = "HTTP:3000/"
-    interval = 30
+    timeout             = 3
+    target              = "HTTP:3000/"
+    interval            = 30
   }
 
   instances = ["${aws_instance.dokku.id}"]
