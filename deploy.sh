@@ -5,12 +5,12 @@ set -e
 cd terraform
 
 echo "Planning terraform build"
-tf plan
+terraform plan
 
 echo "Applying terraform config"
-tf apply
+terraform apply
 
-EC2_DNS=$(tf output dokku_dns)
+EC2_DNS=$(terraform output dokku_dns)
 cd ..
 
 echo "Creating dokku app"
