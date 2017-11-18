@@ -11,7 +11,7 @@ echo "Planning terraform build"
 terraform plan
 
 echo "Applying terraform config"
-terraform apply
+terraform apply -auto-approve=true
 
 EC2_DNS=$(terraform output dokku_dns)
 cd ..
