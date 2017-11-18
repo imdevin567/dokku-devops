@@ -17,11 +17,11 @@ EC2_DNS=$(terraform output dokku_dns)
 cd ..
 
 echo "Creating dokku app"
-ssh -i .keys/dokku.pem ubuntu@$EC2_DNS 'dokku apps:create sample-node-app'
+ssh -o StrictHostKeyChecking=no -i .keys/dokku.pem ubuntu@$EC2_DNS 'dokku apps:create sample-node-app'
 
 echo "Deploying dokku app"
 git remote add dokku dokku@{$EC2_DNS}:sample-node-app
-GIT_SSH_COMMAND="ssh -i .keys/dokku.pem" git push dokku master
+GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i .keys/dokku.pem" git push dokku master
 
 echo "Setting git user name"
 git config user.name $GH_USER_NAME
