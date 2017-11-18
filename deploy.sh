@@ -4,6 +4,9 @@ set -e
 
 cd terraform
 
+echo "Initializing terraform"
+terraform init
+
 echo "Planning terraform build"
 terraform plan
 
