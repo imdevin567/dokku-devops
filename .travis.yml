@@ -12,5 +12,5 @@ deploy:
   - provider: script
     skip_cleanup: true
     script: "chmod +x deploy.sh && ./deploy.sh"
-  on:
-    all_branches: true
+    on:
+      all_branches: true
