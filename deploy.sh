@@ -36,7 +36,7 @@ git remote add upstream "https://$GH_TOKEN@github.com/$GH_REPO.git"
 
 git checkout master
 
-git add .
+git add terraform/terraform.tfstate
 
 NOW=$(TZ=America/Chicago date)
 
