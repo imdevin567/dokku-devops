@@ -16,6 +16,8 @@ terraform apply -auto-approve=true
 EC2_DNS=$(terraform output dokku_dns)
 cd ..
 
+chmod 400 .keys/dokku.pem
+
 echo "Creating dokku app"
 ssh -o StrictHostKeyChecking=no -i .keys/dokku.pem ubuntu@$EC2_DNS 'dokku apps:create sample-node-app'
 
