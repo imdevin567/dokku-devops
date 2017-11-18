@@ -14,6 +14,7 @@ echo "Applying terraform config"
 terraform apply -auto-approve=true
 
 EC2_DNS=$(terraform output dokku_dns)
+ELB_DNS=$(terraform output elb_dns)
 cd ..
 
 chmod 400 .keys/dokku.pem
@@ -49,3 +50,5 @@ git commit -m "[ci skip] tfstate: $NOW"
 
 echo "Pushing changes to upstream master"
 git push upstream master
+
+echo "Deployment complete! View application at http://$ELB_DNS"
