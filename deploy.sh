@@ -18,8 +18,13 @@ cd ..
 
 chmod 400 .keys/dokku.pem
 
-echo "Creating dokku app"
-ssh -o StrictHostKeyChecking=no -i .keys/dokku.pem ubuntu@$EC2_DNS 'dokku apps:create sample-node-app'
+echo "Checking for existence of sample-node-app"
+ssh -o StrictHostKeyChecking=no -i .keys/dokku.pem ubuntu@$EC2_DNS 'dokku apps:list --quiet | grep sample-node-app'
+
+if [ $? -ne 0 ]; then
+  echo "App does not exist! Creating dokku app"
+  ssh -o StrictHostKeyChecking=no -i .keys/dokku.pem ubuntu@$EC2_DNS 'dokku apps:create sample-node-app'
+fi
 
 echo "Deploying dokku app"
 git remote add dokku dokku@$EC2_DNS:sample-node-app
