@@ -22,7 +22,7 @@ echo "Creating dokku app"
 ssh -o StrictHostKeyChecking=no -i .keys/dokku.pem ubuntu@$EC2_DNS 'dokku apps:create sample-node-app'
 
 echo "Deploying dokku app"
-git remote add dokku dokku@{$EC2_DNS}:sample-node-app
+git remote add dokku dokku@$EC2_DNS:sample-node-app
 GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i .keys/dokku.pem" git push dokku master
 
 echo "Setting git user name"
